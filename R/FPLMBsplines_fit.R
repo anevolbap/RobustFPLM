@@ -44,12 +44,6 @@ FPLMBsplines_fit <- function(y, x, u, t, w, freq, spl, norder, fLoss) {
 
     ## Parameter estimation
     est <- minimize(y, xx_coef, u, w, spl, freq, fLoss, norder)
-
-    ##          INTERCEPT = !setequal(w, 1)
-    ##          if (INTERCEPT) cov_dec <- cbind(1, beta_spl[, 1:freq])
-
-    print(dim(cov_dec))
-    print(length(est$slope))
     est$slope_fun <- cov_dec %*% est$slope + est$intercept
     
     return(est)

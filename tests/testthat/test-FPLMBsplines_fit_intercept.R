@@ -32,7 +32,7 @@ test_that("FPLMBplines_fit", {
     expected_output = c(intercept, slope, spl)
 
     ## Comparison (up to 4th decimal)
-    expect_equal(output, expected_output)
+    expect_equal(output, expected_output, tolerance = 1e-4)
 })
 
 
