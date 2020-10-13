@@ -1,10 +1,8 @@
-library('robustbase') 
-library(fda.usc)
-
 test_that("FPLMBplines_fit", {
     
     ## Reality
     set.seed(124)
+    data(tecator, package = "fda.usc")
     ab <- tecator$absorp.fdata
     ab2 <- fdata.deriv(ab, nderiv = 2) # segunda derivada
     train <- 1:155
