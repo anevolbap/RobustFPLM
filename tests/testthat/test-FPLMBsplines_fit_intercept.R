@@ -4,7 +4,7 @@ test_that("FPLMBplines_fit", {
     set.seed(124)
     data(tecator, package = "fda.usc")
     ab <- tecator$absorp.fdata
-    ab2 <- fdata.deriv(ab, nderiv = 2) # segunda derivada
+    ab2 <- fda.usc::fdata.deriv(ab, nderiv = 2) # segunda derivada
     train <- 1:155
     y <- tecator$y$Fat[train]
     u <- tecator$y$Protein[train]
