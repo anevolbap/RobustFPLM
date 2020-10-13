@@ -7,6 +7,7 @@
 #' @param yy description
 #' @param xx_coef description
 #' @param uu description
+#' @param ww #FIXME
 #' @param spl_kn description
 #' @param freq description
 #' @param fLoss description
@@ -17,9 +18,7 @@
 #'
 #' @import fda robustbase
 #' @importFrom stats lm
-#' 
-#' @export
-minimize <- function(yy, xx_coef, uu, spl_kn, freq, fLoss, norder,
+minimize <- function(yy, xx_coef, uu, ww, spl_kn, freq, fLoss, norder,
                      rob.control = lmrob.control(
                          trace.level = 0, # 0
                          nResample = 5000, # 500 default
@@ -31,7 +30,7 @@ minimize <- function(yy, xx_coef, uu, spl_kn, freq, fLoss, norder,
                          maxit.scale = 2e3, # 200
                          max.it = 2e3
                      )) {
-
+  
     ## B-spline basis
     kns <- seq(min(uu), max(uu), length = spl_kn - norder + 2)
     base <- create.bspline.basis(
@@ -42,8 +41,12 @@ minimize <- function(yy, xx_coef, uu, spl_kn, freq, fLoss, norder,
     spl_uu <- getbasismatrix(uu, base)
 
     ## Design matrix
-
-    X <- cbind(xx_coef, spl_uu)
+    INTERCEPT = !setequal(ww, 1)
+    if (INTERCEPT) {
+        X <- cbind(1, xx_coef, spl_uu * ww)
+    } else {
+        X <- cbind(xx_coef, spl_uu)
+    }
 
     if (!(fLoss %in% c("ls", "huang", "lmrob"))) {
         stop("Invalid fLoss. Should be one of \'ls\' or \'huang\' or \'lmrob\' ")
@@ -77,15 +80,24 @@ minimize <- function(yy, xx_coef, uu, spl_kn, freq, fLoss, norder,
                    stop("S-estimator did not converge.")
                }
            },
-           stop("Invalid fLoss.")
+           stop("Invalid fLoss argument.")
            )
 
-    spl_par <- cf[-(1:freq)]
-    slope_par <- cf[  1:freq ]
-
+    ## Estimated parameters
+    if (INTERCEPT) {
+        intercept <- cf[1]
+        slope_par <- cf[2:(freq + 1)]
+        spl_par <- cf[-(1:(freq + 1))]
+    } else {
+        intercept <- 0
+        slope_par <- cf[1:freq]
+        spl_par <- cf[-(1:freq)]
+    }
+    
     return(list(
         spl = spl_par,
         slope = slope_par,
+        intercept = intercept,
         value = vv,
         scale = ss
     ))

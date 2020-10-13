@@ -1,4 +1,6 @@
 test_that("FPLMBplines_fit", {
+    
+    ## Reality
     set.seed(1)
     n = 300
     p = 100
@@ -6,14 +8,18 @@ test_that("FPLMBplines_fit", {
                            x = matrix(rnorm(n * p), n, p),
                            u = sin(sort(seq(0, 1, length = n))),
                            t = sort(runif(p)),
+                           w = 1,
                            freq = 4,
                            spl = 4,
                            norder = 4,
                            fLoss = "ls")
+    output = c(ret$slope, ret$spl, use.names = FALSE)
 
+    ## Expected
     slope = c(317.9664, -422.1852, 617.6771, -430.8267)
     spl = c(-0.02783304, 0.03221540, 0.16196770, 0.18592464)
     expected_output = c(slope, spl)
-    
-    expect_equal(c(slope, spl), expected_output)
+
+    ## Comparison (up to 4th decimal)
+    expect_equal(output, expected_output, tolerance = 1e-4)
 })
