@@ -1,15 +1,23 @@
-<!-- badges: start -->
-[![Travis build status](https://travis-ci.org/anevolbap/RobustFPLM.svg?branch=package)](https://travis-ci.org/anevolbap/RobustFPLM)
-<!-- badges: end -->
-  
 Robust estimators for Functional Partial Linear Models
 ================
 Matias Salibian-Barrera
-2019-07-30
+2020-06-29
 
 This repository contains `R` code to compute the robust MM-estimators
-for Functional Partial Linear models in Boente, Salibian-Barrera, Vena
-(2019). Original code by [Pablo Vena](https://github.com/anevolbap).
+for Functional Partial Linear models in [Boente G, Salibian-Barrera M,
+Vena P. Robust estimation for semi-functional linear regression models.
+To appear in *Computational Statistics and Data
+Science*](https://doi.org/10.1016/j.csda.2020.107041). Original code by
+[Pablo Vena](https://github.com/anevolbap).
+
+#### Installing the `RobustFPLM` package for `R`
+
+The package can be installed directly from this repository using the
+following command in `R`:
+
+``` r
+devtools::install_github("msalibian/RobustFPLM", ref = "master")
+```
 
 ### Tecator example
 
@@ -54,7 +62,7 @@ that to compute the robust estimators for the FPLM model we need the
 [robustbase](https://cran.r-project.org/package=robustbase) package.
 
 ``` r
-library("robustbase")  # lmrob
+library(RobustFPLM)
 ```
 
 Next, we load the `tecator` data from the `fda.usc` package and extract
@@ -93,8 +101,7 @@ a <- FPLMBsplines(y = y, x = x, u = u, t = t, range_freq = range_beta, range_spl
     norder = norder, fLoss = "lmrob", trace = FALSE)
 ```
 
-To fit the M and LS estimators we simply change the argument
-`fLoss`:
+To fit the M and LS estimators we simply change the argument `fLoss`:
 
 ``` r
 d <- FPLMBsplines(y = y, x = x, u = u, t = t, range_freq = range_beta, range_spl = range_eta, 
@@ -205,3 +212,9 @@ intuitively equivalent to using LS on a \`\`cleaned’’ data set. However,
 the robust procedure accomplishes this automatically, and does not
 involve diagnostic plots or manually removing observations from the data
 set.
+
+<!-- <!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.org/anevolbap/RobustFPLM.svg?branch=package)](https://travis-ci.org/anevolbap/RobustFPLM)
+<!-- badges: end --> –\>
