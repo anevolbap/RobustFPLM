@@ -25,7 +25,7 @@
 #' 
 #' @import fda robustbase
 #' @importFrom stats lm
-minimize <- function(y, x_coef, u, spl_kn, freq, fLoss, norder,
+minimize <- function(yy, xx_coef, uu, ww, spl_kn, freq, fLoss, norder,
                      rob.control = lmrob.control(
                          trace.level = 0,
                          nResample = 5000, 
@@ -37,7 +37,7 @@ minimize <- function(y, x_coef, u, spl_kn, freq, fLoss, norder,
                          maxit.scale = 2e3,
                          max.it = 2e3
                      )) {
-
+  
     ## B-spline basis
     kns <- seq(min(u), max(u), length = spl_kn - norder + 2)
     base <- create.bspline.basis(
@@ -48,7 +48,12 @@ minimize <- function(y, x_coef, u, spl_kn, freq, fLoss, norder,
     spl_u <- getbasismatrix(u, base)
 
     ## Design matrix
-    X <- cbind(x_coef, spl_u)
+    INTERCEPT = !setequal(ww, 1)
+    if (INTERCEPT) {
+        X <- cbind(1, xx_coef, spl_uu * ww)
+    } else {
+        X <- cbind(xx_coef, spl_uu)
+    }
 
     if (!(fLoss %in% c("ls", "huang", "lmrob"))) {
         stop("Invalid fLoss. Should be one of \'ls\' or \'huang\' or \'lmrob\' ")
@@ -82,15 +87,24 @@ minimize <- function(y, x_coef, u, spl_kn, freq, fLoss, norder,
                    stop("S-estimator did not converge.")
                }
            },
-           stop("Invalid fLoss.")
+           stop("Invalid fLoss argument.")
            )
 
-    spl_par <- cf[-(1:freq)]
-    slope_par <- cf[  1:freq ]
-
+    ## Estimated parameters
+    if (INTERCEPT) {
+        intercept <- cf[1]
+        slope_par <- cf[2:(freq + 1)]
+        spl_par <- cf[-(1:(freq + 1))]
+    } else {
+        intercept <- 0
+        slope_par <- cf[1:freq]
+        spl_par <- cf[-(1:freq)]
+    }
+    
     return(list(
         spl = spl_par,
         slope = slope_par,
+        intercept = intercept,
         value = vv,
         scale = ss
     ))

@@ -1,6 +1,6 @@
 # my stuff
-    *~
 .gitignore
+*~
 *.org
         
 # History files

@@ -28,7 +28,7 @@
 #' 
 #' @references Pending.
 #' @export
-FPLMBsplines_fit <- function(y, x, u, t, freq, spl, norder, fLoss) {
+FPLMBsplines_fit <- function(y, x, u, t, w, freq, spl, norder, fLoss) {
 
     ## Integration step
     dt <- min(diff(t)) # width of grid
@@ -38,24 +38,17 @@ FPLMBsplines_fit <- function(y, x, u, t, freq, spl, norder, fLoss) {
     grilla_spl <- t # seq(0, 1, length = length(t))
     nodos_spl <- seq(min(grilla_spl), max(grilla_spl),
                      length = freq - norder + 2)
-    base_spl <- create.bspline.basis(
-        rangeval = range(t),
-        norder = norder,
-        breaks = nodos_spl
-    )
+    base_spl <- create.bspline.basis(rangeval = range(t), norder = norder,
+                                     breaks = nodos_spl)
     beta_spl <- getbasismatrix(grilla_spl, base_spl)
     cov_dec <- beta_spl[, 1:freq]
-
+    
     ## Estimated Fourier coefficients (by row)
     xx_coef <- xcenter %*% cov_dec * dt
 
     ## Parameter estimation
-    est <- minimize(
-        y, xx_coef, u, spl, freq, fLoss,
-        norder
-    )
-
-    est$slope_fun <- cov_dec %*% est$slope
-
+    est <- minimize(y, xx_coef, u, w, spl, freq, fLoss, norder)
+    est$slope_fun <- cov_dec %*% est$slope + est$intercept
+    
     return(est)
 }

@@ -66,9 +66,9 @@ minimizar <- function (yy, xx_coef, uu, interac, spl_kn, freq, fLoss, norder, pa
   intercept <- cf[1]
   slope_par <- cf[2:(freq + 1)]
   spl_par <- cf[-(1:(freq + 1))]
-  
+  eta_est = (spl_uu * interac)  %*% spl_par
   return(list(spl = spl_par, slope = slope_par, intercept = intercept,
-              value = vv, scale = ss, conv = cv, traza = tr, matias = aicM))
+              value = vv, scale = ss, conv = cv, traza = tr, matias = aicM, eta_est = eta_est))
 }
 
 
@@ -97,7 +97,7 @@ ajustar_uno <- function (y, x, u, t, interac, freq, spl,
     est <- minimizar(y, xx_coef, u, interac, spl, freq, fLoss,
                      norder, pars)
 
-    est$slope_fun <- cov_dec %*% est$slope
+    est$slope_fun <- cov_dec %*% est$slope + est$intercept
 
     return (est)
 }
@@ -109,7 +109,7 @@ medida_bondad <- function(nn, scl, val, spl,freq, criterio){
            hicGR2  = log(scl^2) + val / nn + freq * log(nn) / (2 * nn) + 2 * spl / nn,
            hicGR   = log(scl^2) + val / nn + spl * log(nn) / (2 * nn) + 2 * freq / nn,
            bic     = log(scl^2 * val/ nn) + (spl + freq) * log(nn) / (2 * nn),
-		 bic1     = log(scl^2 * val/ nn) + (spl + freq) * log(nn) / ( nn),
+           bic1     = log(scl^2 * val/ nn) + (spl + freq) * log(nn) / ( nn),
            bicGR   = log(scl^2) + val / nn  + (spl + freq) * log(nn) / (2 * nn),
            aicCL   = log(scl^2 * val/ nn) +  2 * (spl + freq) / nn,
            aicCLGR = log(scl^2) + val / nn  +  2 * (spl + freq) / nn)

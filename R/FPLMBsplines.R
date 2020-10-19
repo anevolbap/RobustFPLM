@@ -8,6 +8,7 @@
 #' @param u the values of the explanatory variable that enters the model
 #'     non-parametrically.
 #' @param t the grid over which the functional covariates were evaluated.
+#' @param w #FIXME
 #' @param range_freq a vector of B-spline basis sizes to try for the functional
 #'     regression coefficient.
 #' @param range_spl a vector of B-spline basis sizes to try for the
@@ -35,6 +36,7 @@
 #' b <- function(x) x^3
 #' g <- function(x) sin(x)
 #' x <- matrix(rnorm(n * m), nrow = n)
+#' #FIXME: add w
 #' y <- x %*% b(t) * min(diff(t)) + g(u) + rnorm(n, sd = 0.1)
 #'
 #' # Best FPLM fit
@@ -51,7 +53,8 @@
 #' @import fda robustbase
 #' 
 #' @export
-FPLMBsplines <- function(y, x, u, t, range_freq = range_default,
+FPLMBsplines <- function(y, x, u, t, w = 1,
+                         range_freq = range_default,
                          range_spl = range_default, norder = 4,
                          fLoss = "lmrob", criterion = "bic1",
                          trace = FALSE) {
@@ -65,7 +68,7 @@ FPLMBsplines <- function(y, x, u, t, range_freq = range_default,
     ## Double loop
     for (spl in range_spl) {
         for (freq in range_freq) {
-            fit <- FPLMBsplines_fit(y, x, u, t, freq, spl, norder, fLoss)
+            fit <- FPLMBsplines_fit(y, x, u, t, w, freq, spl, norder, fLoss)
             val <- fit$value
             scl <- fit$scale
             crt <- goodness(n, scl, val, spl, freq, criterion)
@@ -87,7 +90,7 @@ FPLMBsplines <- function(y, x, u, t, range_freq = range_default,
         breaks = kns
     )
     spl_uu <- getbasismatrix(u, base)
-    fit_opt$eta_est <- spl_uu %*% fit_opt$spl
+    fit_opt$eta_est <- (spl_uu * w) %*% fit_opt$spl
     dt <- min(diff(t))
     fit_opt$fitted <- as.vector(x %*% fit_opt$slope_fun * dt + fit_opt$eta_est)
 
