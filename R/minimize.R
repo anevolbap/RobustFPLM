@@ -4,7 +4,7 @@
 #' \code{FPLMBsplines_fit()}, not meant for 'public' use.
 #'
 #' @param y Numeric vector of scalar responses.
-#' @param x_coeff_ft Numeric matrix with coefficients for the functional term
+#' @param x_coeff_ft Matrix with coefficients for the functional term
 #'     decomposition.
 #' @param u Numeric vector with values of the explanatory variable that enters
 #'     the model non-parametrically.
