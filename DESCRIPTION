@@ -13,7 +13,7 @@ VignetteBuilder: knitr
 Suggests: fda.usc, knitr, rmarkdown, testthat (>= 2.1.0)
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 LinkingTo: 
     Rcpp, RcppArmadillo
 Imports: 

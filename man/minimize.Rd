@@ -2,49 +2,78 @@
 % Please edit documentation in R/minimize.R
 \name{minimize}
 \alias{minimize}
-\title{Minimization rutine}
+\title{Minimization routine}
 \usage{
 minimize(
-  yy,
-  xx_coef,
-  uu,
-  spl_kn,
-  freq,
+  y,
+  x_coeff,
+  u,
+  w,
+  k_npt,
+  k_ft,
   fLoss,
   norder,
   rob.control = lmrob.control(trace.level = 0, nResample = 5000, tuning.psi = 3.443689,
-    subsampling = "simple", rel.tol = 1e-05, refine.tol = 1e-05, k.max = 2000, maxit.scale
-    = 2000, max.it = 2000)
+    subsampling = "simple", rel.tol = 1e-05, refine.tol = 1e-05, k.max = 2000,
+    maxit.scale = 2000, max.it = 2000)
 )
 }
 \arguments{
-\item{yy}{response.}
+\item{y}{Numeric vector of scalar responses.}
 
-\item{xx_coef}{covariates coefficients.}
+\item{x_coeff}{Numeric matrix with coefficients for the functional term
+decomposition.}
 
-\item{uu}{values for thenon parametric term.}
+\item{u}{Numeric vector with values of the explanatory variable that enters
+the model non-parametrically.}
 
-\item{spl_kn}{number of splines for the non parametric term.}
+\item{w}{Numeric vector with varying coefficients for the non-parametric
+term (w = 1 for non varying coefficients).}
 
-\item{freq}{number of splines for the functional term.}
+\item{k_npt}{Number of splines for the non-parametric term.}
 
-\item{fLoss}{string specifying the loss function. 'ls' for least squares,
+\item{k_ft}{Number of splines for the functional term.}
+
+\item{fLoss}{String specifying the loss function. 'ls' for least squares,
 'huang' for Huber, 'lmbrob' for MM-estimator.}
 
-\item{norder}{spline order (n=4 for cubic splines)}
+\item{norder}{Integer for spline order (norder = 4 for cubic splines).}
 
-\item{rob.control}{optional parameters if \code{fLoss == 'lmbrob'}.}
+\item{rob.control}{Optional parameters if \code{fLoss == "lmbrob"}.}
 }
 \value{
-A vector with components:
-\itemize{
-  \item{spl} estimate for the non parametric term,
-  \item{slope} estimate for the functional slope,
-  \item{value} the minimum value of the loss
-  \item{scale} the scale estimate. 
+A list with components:
+\describe{
+  \item{estimates_npt}{estimate for the non parametric term,}
+  \item{estimates_ft}{estimate for the functional slope,}
+  \item{value}{the minimum value of the loss,}
+  \item{scale}{the scale estimate.}
 }
 }
 \description{
-This function is used internally by FPLMBsplines(), not meant
-for 'public' use.
+This function is the minimization routine used internally by
+\code{FPLMBsplines_fit()}, not meant for 'public' use.
+}
+\examples{
+
+## Synthetic data
+y <- rnorm(100)
+x <- matrix(rnorm(5 * 100), ncol = 5)
+u <- runif(100)
+w <- 1
+
+## Least-squares estimation
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "ls", norder = 4)
+
+## M-estimation
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "huang", norder = 4)
+
+## MM-estimation
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "lmrob", norder = 4)
+
+## MM-estimation with 95\% of efficiency
+minimize(y, x, u, w,
+  k_npt = 5, k_ft = 6, fLoss = "lmrob", norder = 4,
+  rob.control = list(tuning.psi = 4.685061)
+)
 }
