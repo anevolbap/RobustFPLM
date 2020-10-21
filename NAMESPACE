@@ -2,7 +2,6 @@
 
 export(FPLMBsplines)
 export(FPLMBsplines_fit)
-export(goodness)
 import(fda)
 import(robustbase)
 importFrom(Rcpp,sourceCpp)
