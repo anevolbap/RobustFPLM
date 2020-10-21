@@ -4,38 +4,41 @@
 \alias{FPLMBsplines_fit}
 \title{FPLM fit with splines}
 \usage{
-FPLMBsplines_fit(y, x, u, t, freq, spl, norder, fLoss)
+FPLMBsplines_fit(y, x, u, t, w, freq, spl, norder, fLoss)
 }
 \arguments{
-\item{y}{vector of n responses}
+\item{y}{the vector of scalar responses.}
 
-\item{x}{matrix of functional covariates (n x p_1)}
+\item{x}{a matrix of the functional covariates, where each row contains the
+functions evaluated on a (common) grid.}
 
-\item{u}{vector of n observations for g(u_i)}
+\item{u}{the values of the explanatory variable that enters the model
+non-parametrically.}
 
-\item{t}{vector of "times" where X was observed "x[i, j] = X_i( t_j )"}
+\item{t}{the grid over which the functional covariates were evaluated.}
 
-\item{freq}{description}
+\item{freq}{basis size for the functional regression coefficient.}
 
-\item{spl}{description}
+\item{spl}{basis size for the non-parametric component.}
 
-\item{norder}{description}
+\item{norder}{the order of the B-Splines.}
 
-\item{fLoss}{loss function to be minimize (see Details)}
+\item{fLoss}{string specifying the loss function. 'ls' for least squares,
+'huang' for Huber, 'lmbrob' for MM-estimator.}
 }
 \value{
-A list including several.
+A list with components:
+\itemize{
+  \item{spl}{estimated coefficients for the non parametric term},
+  \item{slope}{estimated coefficients for the functional slope},
+  \item{value}{the minimum value of the loss},
+  \item{scale}{the scale estimate},
+  \item{slope_fun}{functional slope estimate}.
+}
 }
 \description{
 FPLM fit with splines
 }
-\details{
-Valid options for the loss function are 'ls', 'lad', 'lmrob', 'huang'.
-}
-\examples{
-# Example.
-
-}
 \references{
-Paper
+Pending.
 }

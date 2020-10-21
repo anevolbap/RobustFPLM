@@ -9,55 +9,56 @@ FPLMBsplines(
   x,
   u,
   t,
-  range_freq = range_default,
-  range_spl = range_default,
+  w = 1,
+  range_nonparam_term = range_default,
+  range_func_term = range_default,
   norder = 4,
-  fLoss = "lmrob",
-  criterion = "bic1",
-  trace = FALSE
+  loss_fun = "lmrob",
+  criterion = rbic,
+  verbose = FALSE
 )
 }
 \arguments{
-\item{y}{the vector of scalar responses.}
+\item{y}{Numeric vector of scalar responses.}
 
-\item{x}{a matrix of the functional covariates, where each row contains the
+\item{x}{Matrix of the functional covariates, where each row contains the
 functions evaluated on a (common) grid.}
 
-\item{u}{the values of the explanatory variable that enters the model
-non-parametrically.}
+\item{u}{Numeric vector with the values of the explanatory variable that
+enters the model non-parametrically.}
 
-\item{t}{the grid over which the functional covariates were evaluated.}
+\item{t}{Numeric vector with the grid over which the functional covariates
+were evaluated.}
 
-\item{range_freq}{a vector of B-spline basis sizes to try for the functional
-regression coefficient.}
+\item{w}{Numeric vector with varying coefficients for the non-parametric term
+(w = 1 for non varying coefficients).}
 
-\item{range_spl}{a vector of B-spline basis sizes to try for the
+\item{range_nonparam_term}{a vector of B-spline basis sizes to explore for the
+functional regression coefficient.}
+
+\item{range_func_term}{a vector of B-spline basis sizes to explore for the
 non-parametric component.}
 
-\item{norder}{the order of the B-Splines.}
+\item{norder}{Integer for the order of the B-Splines.}
 
-\item{fLoss}{loss function to be minimized.}
+\item{loss_fun}{string specifying the loss function. 'ls' for least squares,
+'huang' for Huber, 'lmbrob' for MM-estimator.}
 
-\item{criterion}{criterion for model selection.}
+\item{criterion}{Function for the criterion for model selection.}
 
-\item{trace}{a logical argument indicating whether partial results are
-printed.}
+\item{verbose}{Logical argument indicating whether partial results are printed.}
 }
 \value{
 A list including the following components:
-\itemize{
+\describe{
 \item{fit}{fitted parameters}
-\item{spl}{chosen number of splines for the non-parametric component}
-\item{freq}{chosen number of splines for the funcitonal regression coefficient}
+\item{best_k_npt}{chosen number of splines for the non-parametric term}
+\item{best_k_ft}{chosen number of splines for the functional regression term}
 }
 }
 \description{
-Fit a FPLM model for different spline basis sizes and picks the
-    best one according to a specified model selection criterion.
-}
-\details{
-Add some details regarding the criteria, valid ranges (asympotics)
-    and floss options
+Fit a FPLM model for different spline basis sizes and picks the best one
+    according to a specified model selection criterion.
 }
 \examples{
 
@@ -66,15 +67,17 @@ n <- 100
 m <- 50
 u <- runif(n)
 t <- runif(m)
+w <- 1
 b <- function(x) x^3
 g <- function(x) sin(x)
 x <- matrix(rnorm(n * m), nrow = n)
-y <- x \%*\% b(t) * min(diff(t)) + g(u) + rnorm(n, sd = 0.1)
+#FIXME: add w
+y <- x \%*\% b(t) * min(diff(t)) + w * g(u) + rnorm(n, sd = 0.1)
 
 # Best FPLM fit
-FPLM_fit <- FPLMBsplines(y, x, u, t,
-  range_freq = 4:13, range_spl = 4:13,
-  norder = 4, fLoss = "ls", criterion = "bic1", trace = FALSE
+FPLM_fit <- FPLMBsplines(y, x, u, t, w,
+  range_nonparam_term = 4:13, range_func_term = 4:13,
+  norder = 4, loss_fun = "ls", criterion = "bic1", verbose = FALSE
 )
 
 # Plot the estimates
