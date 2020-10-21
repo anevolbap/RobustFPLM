@@ -1,4 +1,4 @@
-#' Best FPLMBsplines_fit given by a model selection criterion.
+#' Best FPLM fit given by a model selection criterion.
 #'
 #' Fit a FPLM model for different spline basis sizes and picks the best one
 #'     according to a specified model selection criterion.
@@ -45,8 +45,7 @@
 #' # Best FPLM fit
 #' FPLM_fit <- FPLMBsplines(y, x, u, t, w,
 #'   range_nonparam_term = 4:13, range_func_term = 4:13,
-#'   norder = 4, loss_fun = "ls", criterion = "bic1", verbose = FALSE
-#' )
+#'   norder = 4, loss_fun = "ls", criterion = rbic, verbose = FALSE)
 #'
 #' # Plot the estimates
 #' par(mfrow = c(2, 1))
