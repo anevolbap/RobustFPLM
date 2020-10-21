@@ -9,11 +9,12 @@ test_that("FPLMBplines_fit", {
                            u = sin(sort(seq(0, 1, length = n))),
                            t = sort(runif(p)),
                            w = 1,
-                           freq = 4,
-                           spl = 4,
+                           k_ft = 4,
+                           k_npt = 4,
                            norder = 4,
-                           fLoss = "ls")
-    output = c(ret$slope, ret$spl, use.names = FALSE)
+                           loss_fun = "ls")
+
+    output = c(ret$estimates_ft, ret$estimates_npt, use.names = FALSE)
 
     ## Expected
     slope = c(317.9664, -422.1852, 617.6771, -430.8267)

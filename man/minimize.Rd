@@ -6,12 +6,12 @@
 \usage{
 minimize(
   y,
-  x_coeff,
+  x_coeff_ft,
   u,
   w,
   k_npt,
   k_ft,
-  fLoss,
+  loss_fun,
   norder,
   rob.control = lmrob.control(trace.level = 0, nResample = 5000, tuning.psi = 3.443689,
     subsampling = "simple", rel.tol = 1e-05, refine.tol = 1e-05, k.max = 2000,
@@ -21,7 +21,7 @@ minimize(
 \arguments{
 \item{y}{Numeric vector of scalar responses.}
 
-\item{x_coeff}{Numeric matrix with coefficients for the functional term
+\item{x_coeff_ft}{Matrix with coefficients for the functional term
 decomposition.}
 
 \item{u}{Numeric vector with values of the explanatory variable that enters
@@ -34,12 +34,12 @@ term (w = 1 for non varying coefficients).}
 
 \item{k_ft}{Number of splines for the functional term.}
 
-\item{fLoss}{String specifying the loss function. 'ls' for least squares,
-'huang' for Huber, 'lmbrob' for MM-estimator.}
+\item{loss_fun}{String specifying the loss function. 'ls' for least squares,
+'huang' for Huber, 'lmrob' for MM-estimator.}
 
 \item{norder}{Integer for spline order (norder = 4 for cubic splines).}
 
-\item{rob.control}{Optional parameters if \code{fLoss == "lmbrob"}.}
+\item{rob.control}{Optional parameters if \code{loss_fun == "lmbrob"}.}
 }
 \value{
 A list with components:
@@ -63,17 +63,17 @@ u <- runif(100)
 w <- 1
 
 ## Least-squares estimation
-minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "ls", norder = 4)
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, loss_fun = "ls", norder = 4)
 
 ## M-estimation
-minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "huang", norder = 4)
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, loss_fun = "huang", norder = 4)
 
 ## MM-estimation
-minimize(y, x, u, w, k_npt = 5, k_ft = 6, fLoss = "lmrob", norder = 4)
+minimize(y, x, u, w, k_npt = 5, k_ft = 6, loss_fun = "lmrob", norder = 4)
 
 ## MM-estimation with 95\% of efficiency
 minimize(y, x, u, w,
-  k_npt = 5, k_ft = 6, fLoss = "lmrob", norder = 4,
+  k_npt = 5, k_ft = 6, loss_fun = "lmrob", norder = 4,
   rob.control = list(tuning.psi = 4.685061)
 )
 }
