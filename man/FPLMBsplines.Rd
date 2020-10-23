@@ -2,7 +2,7 @@
 % Please edit documentation in R/FPLMBsplines.R
 \name{FPLMBsplines}
 \alias{FPLMBsplines}
-\title{Best FPLMBsplines_fit given by a model selection criterion.}
+\title{Best FPLM fit given by a model selection criterion.}
 \usage{
 FPLMBsplines(
   y,
@@ -12,10 +12,9 @@ FPLMBsplines(
   w = 1,
   range_nonparam_term = range_default,
   range_func_term = range_default,
-  norder = 4,
-  loss_fun = "lmrob",
-  criterion = rbic,
-  verbose = FALSE
+  spl_order = 4,
+  loss_fun = loss_lmrob,
+  model_selection = rbic
 )
 }
 \arguments{
@@ -33,20 +32,21 @@ were evaluated.}
 \item{w}{Numeric vector with varying coefficients for the non-parametric term
 (w = 1 for non varying coefficients).}
 
-\item{range_nonparam_term}{a vector of B-spline basis sizes to explore for the
-functional regression coefficient.}
+\item{range_nonparam_term}{a vector of B-spline basis sizes to explore for
+the functional regression coefficient.}
 
 \item{range_func_term}{a vector of B-spline basis sizes to explore for the
 non-parametric component.}
 
-\item{norder}{Integer for the order of the B-Splines.}
-
 \item{loss_fun}{string specifying the loss function. 'ls' for least squares,
 'huang' for Huber, 'lmbrob' for MM-estimator.}
 
+\item{norder}{Integer for the order of the B-Splines.}
+
 \item{criterion}{Function for the criterion for model selection.}
 
-\item{verbose}{Logical argument indicating whether partial results are printed.}
+\item{verbose}{Logical argument indicating whether partial results are
+printed.}
 }
 \value{
 A list including the following components:
@@ -57,8 +57,8 @@ A list including the following components:
 }
 }
 \description{
-Fit a FPLM model for different spline basis sizes and picks the best one
-    according to a specified model selection criterion.
+Pick the best FPLM model across different basis sizes according to a
+specified model selection criterion.
 }
 \examples{
 
@@ -71,18 +71,17 @@ w <- 1
 b <- function(x) x^3
 g <- function(x) sin(x)
 x <- matrix(rnorm(n * m), nrow = n)
-#FIXME: add w
+# FIXME: add w
 y <- x \%*\% b(t) * min(diff(t)) + w * g(u) + rnorm(n, sd = 0.1)
 
 # Best FPLM fit
 FPLM_fit <- FPLMBsplines(y, x, u, t, w,
   range_nonparam_term = 4:13, range_func_term = 4:13,
-  norder = 4, loss_fun = "ls", criterion = "bic1", verbose = FALSE
+  norder = 4, loss_fun = "ls", criterion = rbic, verbose = FALSE
 )
 
 # Plot the estimates
 par(mfrow = c(2, 1))
 plot(t, FPLM_fit$fit$slope_fun, pch = 16)
 plot(u, FPLM_fit$fit$eta_est, pch = 16)
-
 }
