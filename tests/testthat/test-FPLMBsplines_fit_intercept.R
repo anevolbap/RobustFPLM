@@ -1,4 +1,4 @@
-test_that("FPLMBplines_fit", {
+test_that("FPLMBplines_fit_tecator_lmrob", {
     
     ## Reality
     set.seed(124)
@@ -20,8 +20,8 @@ test_that("FPLMBplines_fit", {
                            k_ft = 5,
                            k_npt = 7,
                            norder = 4,
-                           loss_fun = "lmrob")
-    output = c(ret$intercept, ret$estimates_ft, ret$estimates_npt, use.names = FALSE)
+                           loss_fun = loss_lmrob)
+    output = c(ret$est_intercept, ret$est_ft, ret$est_npt, use.names = FALSE)
 
     ## Expected
     slope = c(575.921977, -0.186321, -90.393038, 257.141971,-129.948037)

@@ -4,7 +4,7 @@
 \alias{rbic}
 \title{Robust BIC-type criterion}
 \usage{
-rbic(n, scl, val, k_npt, k_ft)
+rbic(fit)
 }
 \arguments{
 \item{n}{Sample size.}

@@ -74,8 +74,9 @@ y_i = <x_i, b(t_i)> + w_i * g(u_i) + e_i
 
 where
 \describe{
+\item{x}{is the functional observation,}
 \item{b(t)}{is the functional slope,}
-\item{w*g(u)}{is the non-parametric term,}
+\item{w * g(u)}{is the non-parametric term,}
 \item{e}{the error term.}
 }
 }

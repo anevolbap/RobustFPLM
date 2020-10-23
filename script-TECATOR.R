@@ -1,4 +1,4 @@
-## ---------------------------------------------------------------------
+su## ---------------------------------------------------------------------
 ## TECATOR - http://lib.stat.cmu.edu/datasets/tecator
 ##
 
@@ -42,10 +42,12 @@ criterio <- 'bic1'
 ## range for possible dimension for splines for the regression component
 
 rango_beta <- 4:13
+rango_beta <- 4:6
 
 ## range for possible dimension for splines for the non-parametric component
 
 rango_eta <- 4:13
+rango_eta <- 4:6
 
 ## Create the training and test data sets
 ## "interact" indicates whether the 2nd term in the model is
@@ -63,12 +65,39 @@ test  <- submuestra(156:215, covariable = 'd2', interac = TRUE)
 ## Compute the optimal robust estimator, using 'criterio' to
 ## select best combination of splines bases
 
+source('tecator-specific-functions.R')
+source("R/FPLMBsplines.R")
+source("R/FPLMBsplines_fit.R")
+source("R/minimize.R")
+source("R/goodness.R")
+
+set.seed(124)
+hola = FPLMBsplines(y = train$y, x = train$x, u = train$u, t = train$t,
+                    w = train$interac, range_freq =6,
+                    range_spl = 6, norder = 4, 'ls',
+                    criterion = criterio, trace = TRUE)
+
+
+
 set.seed(124) # for lmrob()
 best_rb <- ajustar_todos(y = train$y, x = train$x, u = train$u,
                          t = train$t, interac = train$interac,
-                         rango_freq = rango_beta,
-                         rango_spl = rango_eta, norder = 4, 'lmrob',
+                         rango_freq = 5,
+                         rango_spl = 7, norder = 4, 'lmrob',
                          criterio = criterio)
+
+
+all(
+    c(hola$freq,hola$spl) == c(best_rb$freq,best_rb$spl),
+    hola$fit$slope == best_rb$fit$slope,
+    hola$fit$slope_fun == best_rb$fit$slope_fun,
+    hola$fit$intercept == best_rb$fit$intercept,
+    hola$fit$scale == best_rb$fit$scale,
+    hola$fit$value == best_rb$fit$value,
+    hola$fit$eta_est == best_rb$fit$eta_est)
+
+
+hola$fit$eta_est == best_rb$fit$eta_est
 
 ## Residuals on the training set from the robust fit
 

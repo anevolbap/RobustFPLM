@@ -11,7 +11,7 @@
 #'
 #' where
 #' \describe{
-#' \item{x}{is the functional observation}
+#' \item{x}{is the functional observation,}
 #' \item{b(t)}{is the functional slope,}
 #' \item{w * g(u)}{is the non-parametric term,}
 #' \item{e}{the error term.}

@@ -12,9 +12,9 @@ test_that("FPLMBplines_fit", {
                            k_ft = 4,
                            k_npt = 4,
                            norder = 4,
-                           loss_fun = "ls")
+                           loss_fun = loss_ls)
 
-    output = c(ret$estimates_ft, ret$estimates_npt, use.names = FALSE)
+    output = c(ret$est_ft, ret$est_npt, use.names = FALSE)
 
     ## Expected
     slope = c(317.9664, -422.1852, 617.6771, -430.8267)
