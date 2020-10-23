@@ -10,8 +10,8 @@ FPLMBsplines(
   u,
   t,
   w = 1,
-  range_nonparam_term = range_default,
   range_func_term = range_default,
+  range_nonparam_term = range_default,
   spl_order = 4,
   loss_fun = loss_lmrob,
   model_selection = rbic
@@ -32,34 +32,54 @@ were evaluated.}
 \item{w}{Numeric vector with varying coefficients for the non-parametric term
 (w = 1 for non varying coefficients).}
 
-\item{range_nonparam_term}{a vector of B-spline basis sizes to explore for
-the functional regression coefficient.}
-
-\item{range_func_term}{a vector of B-spline basis sizes to explore for the
+\item{range_func_term}{A vector of B-spline basis sizes to explore for the
 non-parametric component.}
+
+\item{range_nonparam_term}{A vector of B-spline basis sizes to explore for
+the functional regression term.}
+
+\item{spl_order}{Integer for  the order of the B-Splines.}
 
 \item{loss_fun}{string specifying the loss function. 'ls' for least squares,
 'huang' for Huber, 'lmbrob' for MM-estimator.}
 
-\item{norder}{Integer for the order of the B-Splines.}
-
-\item{criterion}{Function for the criterion for model selection.}
-
-\item{verbose}{Logical argument indicating whether partial results are
-printed.}
+\item{model_selection}{Function for the criterion for model selection.}
 }
 \value{
 A list including the following components:
 \describe{
-\item{fit}{fitted parameters}
-\item{best_k_npt}{chosen number of splines for the non-parametric term}
-\item{best_k_ft}{chosen number of splines for the functional regression term}
+\item{est_npt}{estimated spline coefficients for the non-parametric term}
+\item{est_ft}{estimated spline coefficients for the functional slope}
+\item{est_npt_fun}{estimated non-parametric term (evaluated on the given grid)}
+\item{est_ft_fun}{estimated functional slope (evaluated on the given grid)}
+\item{est_intercept}{estimated intercept}
+\item{k_ft}{chosen number of splines for the functional regression term}
+\item{k_npt}{chosen number of splines for the non-parametric term}
+\item{value}{the minimum value of the loss function}
+\item{scale}{the scale estimate}
+\item{y_est}{fitted responses}
+\item{n}{sample size}
 }
 }
 \description{
 Pick the best FPLM model across different basis sizes according to a
 specified model selection criterion.
 }
+\section{The model}{
+
+
+The FPLM model assumes the following relation:
+
+y_i = <x_i, b(t_i)> + w_i * g(u_i) + e_i
+
+where
+\describe{
+\item{b(t)}{is the functional slope,}
+\item{w*g(u)}{is the non-parametric term,}
+\item{e}{the error term.}
+}
+}
+
 \examples{
 
 # Synthetic data
@@ -71,17 +91,16 @@ w <- 1
 b <- function(x) x^3
 g <- function(x) sin(x)
 x <- matrix(rnorm(n * m), nrow = n)
-# FIXME: add w
 y <- x \%*\% b(t) * min(diff(t)) + w * g(u) + rnorm(n, sd = 0.1)
 
 # Best FPLM fit
 FPLM_fit <- FPLMBsplines(y, x, u, t, w,
-  range_nonparam_term = 4:13, range_func_term = 4:13,
-  norder = 4, loss_fun = "ls", criterion = rbic, verbose = FALSE
-)
+                         spl_order = 4,
+                         loss_fun = ls,
+                         model_selection = rbic)
 
 # Plot the estimates
 par(mfrow = c(2, 1))
-plot(t, FPLM_fit$fit$slope_fun, pch = 16)
-plot(u, FPLM_fit$fit$eta_est, pch = 16)
+plot(t, FPLM_fit$est_ft_fun, pch = 16)
+plot(u, FPLM_fit$est_npt_fun, pch = 16)
 }

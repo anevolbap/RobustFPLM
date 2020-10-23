@@ -3,6 +3,20 @@
 #' Pick the best FPLM model across different basis sizes according to a
 #' specified model selection criterion.
 #'
+#' @section The model:
+#'
+#' The FPLM model assumes the following relation:
+#' 
+#' y_i = <x_i, b(t_i)> + w_i * g(u_i) + e_i
+#'
+#' where
+#' \describe{
+#' \item{x}{is the functional observation}
+#' \item{b(t)}{is the functional slope,}
+#' \item{w * g(u)}{is the non-parametric term,}
+#' \item{e}{the error term.}
+#' }
+#' 
 #' @param y Numeric vector of scalar responses.
 #' @param x Matrix of the functional covariates, where each row contains the
 #'     functions evaluated on a (common) grid.
@@ -12,28 +26,28 @@
 #'     were evaluated.
 #' @param w Numeric vector with varying coefficients for the non-parametric term
 #'     (w = 1 for non varying coefficients).
-#' @param range_nonparam_term a vector of B-spline basis sizes to explore for
-#'     the functional regression coefficient.
-#' @param range_func_term a vector of B-spline basis sizes to explore for the
+#' @param range_nonparam_term A vector of B-spline basis sizes to explore for
+#'     the functional regression term.
+#' @param range_func_term A vector of B-spline basis sizes to explore for the
 #'     non-parametric component.
-#' @param spl_order Integer for the order of the B-Splines.
+#' @param spl_order Integer for  the order of the B-Splines.
 #' @param loss_fun string specifying the loss function. 'ls' for least squares,
 #'     'huang' for Huber, 'lmbrob' for MM-estimator.
 #' @param model_selection Function for the criterion for model selection.
 #'
 #' @return A list including the following components:
 #' \describe{
-#' \item{est_npt}{estimated spline coefficients for the non-parametric term,}
-#' \item{est_ft}{estimated spline coefficients for the functional slope,}
-#' \item{est_npt_fun}{estimated non-parametric term,}
-#' \item{est_ft_fun}{estimated functional slope,}
-#' \item{est_intercept}{estimated intercept,}
-#' \item{k_ft}{chosen number of splines for the functional regression term,}
-#' \item{k_npt}{chosen number of splines for the non-parametric term,}
-#' \item{value}{value of the minimization,}
-#' \item{scale}{scale,}
-#' \item{y_est}{fitted responses,}
-#' \item{n}{sample size.}
+#' \item{est_npt}{estimated spline coefficients for the non-parametric term}
+#' \item{est_ft}{estimated spline coefficients for the functional slope}
+#' \item{est_npt_fun}{estimated non-parametric term (evaluated on the given grid)}
+#' \item{est_ft_fun}{estimated functional slope (evaluated on the given grid)}
+#' \item{est_intercept}{estimated intercept}
+#' \item{k_ft}{chosen number of splines for the functional regression term}
+#' \item{k_npt}{chosen number of splines for the non-parametric term}
+#' \item{value}{the minimum value of the loss function}
+#' \item{scale}{the scale estimate}
+#' \item{y_est}{fitted responses}
+#' \item{n}{sample size}
 #' }
 #' @examples
 #'

@@ -15,6 +15,7 @@
 #'     Pablo. (2020). Robust estimation for semi-functional linear regression
 #'     models. Computational Statistics & Data
 #'     Analysis. 152. 107041. 10.1016/j.csda.2020.107041.
-rbic <- function(n, scl, val, k_npt, k_ft) {
-    log(scl^2 * val / n) + (k_npt + k_ft) * log(n) / (n)
+rbic <- function(fit) {
+    n <- fit$n 
+    log(fit$scale^2 * fit$value / n) + (fit$k_npt + fit$k_ft) * log(n) / (n)
 }

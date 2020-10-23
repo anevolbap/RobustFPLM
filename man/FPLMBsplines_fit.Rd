@@ -2,43 +2,75 @@
 % Please edit documentation in R/FPLMBsplines_fit.R
 \name{FPLMBsplines_fit}
 \alias{FPLMBsplines_fit}
-\title{FPLM fit with splines}
+\title{FPLM fit with fixed B-splines basis sizes.}
 \usage{
-FPLMBsplines_fit(y, x, u, t, w, freq, spl, norder, fLoss)
+FPLMBsplines_fit(y, x, u, t, w, k_ft, k_npt, spl_order, loss_fun, ...)
 }
 \arguments{
-\item{y}{the vector of scalar responses.}
+\item{y}{Numeric vector of scalar responses.}
 
-\item{x}{a matrix of the functional covariates, where each row contains the
+\item{x}{Matrix of the functional covariates, where each row contains the
 functions evaluated on a (common) grid.}
 
-\item{u}{the values of the explanatory variable that enters the model
-non-parametrically.}
+\item{u}{Numeric vector with values of the explanatory variable that enters
+the model non-parametrically.}
 
-\item{t}{the grid over which the functional covariates were evaluated.}
+\item{t}{Numeric grid over which the functional covariates were evaluated.}
 
-\item{freq}{basis size for the functional regression coefficient.}
+\item{w}{Numeric vector with varying coefficients for the non-parametric term
+(w = 1 for non varying coefficients).}
 
-\item{spl}{basis size for the non-parametric component.}
+\item{k_ft}{basis size for the functional regression term.}
 
-\item{norder}{the order of the B-Splines.}
+\item{k_npt}{basis size for the non-parametric term.}
 
-\item{fLoss}{string specifying the loss function. 'ls' for least squares,
-'huang' for Huber, 'lmbrob' for MM-estimator.}
+\item{spl_order}{Integer for spline order (norder = 4 for cubic splines).}
+
+\item{loss_fun}{String specifying the loss function. 'ls' for least squares,
+'huang' for Huber, 'lmrob' for MM-estimator.}
 }
 \value{
 A list with components:
-\itemize{
-  \item{spl}{estimated coefficients for the non parametric term},
-  \item{slope}{estimated coefficients for the functional slope},
-  \item{value}{the minimum value of the loss},
-  \item{scale}{the scale estimate},
-  \item{slope_fun}{functional slope estimate}.
+\describe{
+  \item{estimates_npt}{estimate for the non parametric term}
+  \item{estimates_ft}{estimate for the functional slope}
+  \item{value}{the minimum value of the loss function}
+  \item{scale}{the scale estimate}
+  \item{slope_fun}{functional slope estimate}
 }
 }
 \description{
-FPLM fit with splines
+Given the sizes of both B-splines basis computes the corresponding FPLM fit.
+}
+\examples{
+
+# Synthetic data
+n <- 100
+m <- 50
+u <- runif(n)
+t <- runif(m)
+w <- 1
+b <- function(x) x^3
+g <- function(x) sin(x)
+x <- matrix(rnorm(n * m), nrow = n)
+y <- x \%*\% b(t) * min(diff(t)) + w * g(u) + rnorm(n, sd = 0.1)
+
+# Robust FPLM fit for k_ft = 5 and k_npt = 7 with cubic splines
+FPLM_one_fit <- FPLMBsplines_fit(y, x, u, t, w,
+                                 k_ft = 5, k_npt = 7,
+                                 spl_order = 4,
+                                 loss_fun = loss_lmrob,
+                                 model_selection = rbic)
+                  
+# Plot the estimates
+par(mfrow = c(2, 1))
+plot(t, FPLM_one_fit$est_ft_fun, pch = 16)
+plot(u, FPLM_one_fit$est_npt_fun, pch = 16)
+
 }
 \references{
-Pending.
+Boente, Graciela & Salibian-Barrera, Matias & Vena,
+    Pablo. (2020). Robust estimation for semi-functional linear regression
+    models. Computational Statistics & Data
+    Analysis. 152. 107041. 10.1016/j.csda.2020.107041.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/define_default_range.R
 \name{define_default_range}
 \alias{define_default_range}
-\title{Define default range for basis size exploration}
+\title{Define the default range for spline basis size exploration}
 \usage{
 define_default_range(sample_size, spl_order)
 }
@@ -12,20 +12,17 @@ define_default_range(sample_size, spl_order)
 \item{spl_order}{Integer for spline order (spl_order = 4 for cubic splines).}
 }
 \value{
-list of basis sizes to explore.
+vector of basis sizes.
 }
 \description{
-A possible way to define the possible sizes of the spline basis is following
-the rates of convergence given in Theorem 3.2 (see Section 2.2 in Boente et
-al. (2020)) Note that for cubic splines the smallest possible number of knots
-is 4.
+A possible way to define the possible sizes of the spline basis is after the
+rates of convergence given in Theorem 3.2 in Boente et al. (2020) (see
+Section 2.2) Note that for cubic splines the smallest possible number of
+knots is 4.
 }
 \examples{
-# Sizes ranging from 4 to 13:
-define_default_range(sample_size=100, spl_order=4)
-
-
-
+# For cubic splines and 100 observations the sizes range from 4 to 13:
+define_default_range(sample_size = 100, spl_order = 4)
 }
 \references{
 Boente, Graciela & Salibian-Barrera, Matias & Vena,

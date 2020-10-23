@@ -49,89 +49,37 @@
 #' )
 #' @import fda robustbase
 #' @importFrom stats lm
-minimize <- function(y, x_coeff_ft, u, w, k_npt, k_ft, loss_fun, norder,
-                     rob.control = lmrob.control(
-                         trace.level = 0,
-                         nResample = 5000,
-                         tuning.psi = 3.443689, # 85% efficiency
-                         subsampling = "simple",
-                         rel.tol = 1e-5,
-                         refine.tol = 1e-5,
-                         k.max = 2e3,
-                         maxit.scale = 2e3,
-                         max.it = 2e3
-                     )) {
-
-    ## B-spline basis
-    kns <- seq(min(u), max(u), length = k_npt - norder + 2)
-    base <- create.bspline.basis(
-        rangeval = range(u),
-        norder = norder,
-        breaks = kns
-    )
-    spl_u <- getbasismatrix(u, base)
-
+minimize <- function(y, x_coeff, spl_u, intercept, loss_fun, ...) {
+  
     ## Design matrix
-    INTERCEPT <- !setequal(w, 1)
-    if (INTERCEPT) {
-        X <- cbind(1, x_coeff_ft, spl_u * w)
-    } else {
-        X <- cbind(x_coeff_ft, spl_u)
-    }
-
-    if (!(loss_fun %in% c("ls", "huang", "lmrob"))) {
-        stop("Invalid loss function 'loss_fun'. Should be one of \'ls\' or \'huang\' or \'lmrob\'.")
-    }
-
-    ## Minimization menu
-    switch(loss_fun, # FIXME: replace switch statement (functions instead of strings)
-           ls = {
-               fit <- lm(y ~ X - 1)
-               cf <- fit$coef
-               vv <- sum(fit$res^2) # 1
-               ss <- sqrt(mean(fit$res^2))
-           },
-           huang = {
-               init <- lm(y ~ X - 1)$coef
-               fit <- huber_estimates(X, y, init, 1.345, 1e-8)
-               cf <- as.vector(fit$param)
-               ss <- 1
-               vv <- fit$value
-           },
-           lmrob = {
-               fit <- lmrob(y ~ X - 1, control = rob.control)
-               if (fit$init.S$converged) {
-                   cf <- fit$coef
-                   ss <- fit$scale
-                   vv <- sum(Mpsi(fit$res / ss,
-                                  cc = rob.control$tuning.psi,
-                                  psi = rob.control$psi,
-                                  deriv = -1
-                                  ))
-               } else {
-                   stop("S-estimator did not converge.")
-               }
-           }
-           )
+    X <- cbind(x_coeff, spl_u)
+    if (intercept) X <- cbind(1, X)
+    
+    loss <- loss_fun(y, X, ...)                             
 
     ## Estimated parameters
-    if (INTERCEPT) {
-        intercept <- cf[1]
-        slope_par <- cf[2:(k_ft + 1)]
-        spl_par <- cf[-(1:(k_ft + 1))]
+    k <- ncol(x_coeff)
+    if (intercept) {
+        intercept <- loss$coeff[1]
+        slope_par <- loss$coeff[2:(k + 1)]
+        spl_par <- loss$coeff[-(1:(k + 1))]
     } else {
         intercept <- 0
-        slope_par <- cf[1:k_ft]
-        spl_par <- cf[-(1:k_ft)]
+        slope_par <- loss$coeff[1:k]
+        spl_par <- loss$coeff[-(1:k)]
     }
 
     return(
         list(
-            estimates_npt = spl_par,
-            estimates_ft = slope_par,
-            intercept = intercept,
-            value = vv,
-            scale = ss
+            est_npt = spl_par,
+            est_ft = slope_par,
+            est_intercept = intercept,
+            value = loss$value,
+            scale = loss$scale
         )
     )
 }
+
+##          if (!(loss_fun %in% c("ls", "huang", "lmrob"))) {
+##              stop("Invalid loss function 'loss_fun'. Should be one of \'ls\' or \'huang\' or \'lmrob\'.")
+##          }

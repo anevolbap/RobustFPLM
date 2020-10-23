@@ -4,22 +4,13 @@
 \alias{minimize}
 \title{Minimization routine}
 \usage{
-minimize(
-  y,
-  x_coeff_ft,
-  u,
-  w,
-  k_npt,
-  k_ft,
-  loss_fun,
-  norder,
-  rob.control = lmrob.control(trace.level = 0, nResample = 5000, tuning.psi = 3.443689,
-    subsampling = "simple", rel.tol = 1e-05, refine.tol = 1e-05, k.max = 2000,
-    maxit.scale = 2000, max.it = 2000)
-)
+minimize(y, x_coeff, spl_u, intercept, loss_fun, ...)
 }
 \arguments{
 \item{y}{Numeric vector of scalar responses.}
+
+\item{loss_fun}{String specifying the loss function. 'ls' for least squares,
+'huang' for Huber, 'lmrob' for MM-estimator.}
 
 \item{x_coeff_ft}{Matrix with coefficients for the functional term
 decomposition.}
@@ -33,9 +24,6 @@ term (w = 1 for non varying coefficients).}
 \item{k_npt}{Number of splines for the non-parametric term.}
 
 \item{k_ft}{Number of splines for the functional term.}
-
-\item{loss_fun}{String specifying the loss function. 'ls' for least squares,
-'huang' for Huber, 'lmrob' for MM-estimator.}
 
 \item{norder}{Integer for spline order (norder = 4 for cubic splines).}
 

@@ -2,6 +2,7 @@
 
 export(FPLMBsplines)
 export(FPLMBsplines_fit)
+export(define_default_range)
 import(fda)
 import(robustbase)
 importFrom(Rcpp,sourceCpp)
