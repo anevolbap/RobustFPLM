@@ -19,7 +19,7 @@ test_that("FPLMBplines_fit_tecator_lmrob", {
                            w = w,
                            k_ft = 5,
                            k_npt = 7,
-                           norder = 4,
+                           spl_order = 4,
                            loss_fun = loss_lmrob)
     output = c(ret$est_intercept, ret$est_ft, ret$est_npt, use.names = FALSE)
 

@@ -11,7 +11,7 @@ test_that("FPLMBplines_fit", {
                            w = 1,
                            k_ft = 4,
                            k_npt = 4,
-                           norder = 4,
+                           spl_order = 4,
                            loss_fun = loss_ls)
 
     output = c(ret$est_ft, ret$est_npt, use.names = FALSE)
